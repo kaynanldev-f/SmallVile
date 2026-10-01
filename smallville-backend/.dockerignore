@@ -1,0 +1,19 @@
+# Ignorar dependências locais e logs
+node_modules
+npm-debug.log
+
+# Ignorar pasta de build local
+dist
+
+# Ignorar arquivos do Git e Docker
+.git
+.gitignore
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Ignorar arquivos de ambiente (não devem ir para a imagem)
+.env
+.env.example
+coverage
+test

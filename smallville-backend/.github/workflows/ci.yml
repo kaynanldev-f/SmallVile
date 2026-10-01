@@ -1,0 +1,106 @@
+name: CI
+
+on:
+    push:
+        branches: [main, dev]
+    pull_request:
+        branches: [main, dev]
+
+concurrency:
+    group: ci-${{ github.ref }}
+    cancel-in-progress: true
+
+env:
+    NODE_VERSION: 20
+
+jobs:
+    lint:
+        name: Lint & Type Check
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+            
+            - name: Setup Node
+              uses: actions/setup-node@v6
+              with: 
+                node-version: ${{ env.NODE_VERSION }}
+                cache: 'yarn'
+
+            - name: Install Dependencies
+              run: yarn install --frozen-lockfile
+
+            - name: Lint
+              run: yarn lint
+
+            - name: Type check
+              run: yarn tsc --noEmit
+
+    test:
+        name: Tests
+        runs-on: ubuntu-latest
+        needs: lint
+        services:
+            mongodb:
+                image: mongo:8
+                ports:
+                    - 27017-27017
+        env:
+            DATABASE_URL: mongodb://localhost:27017/cineville_test
+            NODE_ENV: test
+            TOKEN_SECRET: ci-test-secret-not-for-production
+            TOKEN_EXPIRATION: '1h'
+            EMAIL_ADMIN: admin@ci-test.local
+            PASSWORD_ADMIN: ci-test-password
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+                
+            - name: Setup Node
+              uses: actions/setup-node@v6
+              with:
+                node-version: ${{ env.NODE_VERSION }}
+                cache: 'yarn'
+
+            - name: Install Dependencies
+              run: yarn install --frozen-lockfile
+
+            - name: Unit tests
+              run: yarn test --coverage --passWithNoTests
+
+            - name: E2E tests
+              run: yarn test:e2e --passWithNoTests --runInBand
+
+            - name: Upload coverage
+              uses: actions/upload-artifact@v6
+              with:
+                name: coverage-report
+                path: coverage/
+                retention-days: 7
+    
+    build:
+        name: Build
+        runs-on: ubuntu-latest
+        needs: test
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+            
+            - name: Setup Node
+              uses: actions/setup-node@v6
+              with:
+                node-version: ${{ env.NODE_VERSION }}
+                cache: 'yarn'
+
+            - name: Install Dependencies
+              run: yarn install --frozen-lockfile
+
+            - name: Build
+              run: yarn build
+            
+            - name: Upload build artifact
+              uses: actions/upload-artifact@v6
+              with:
+                name: dist
+                path: dist/
+                retention-days: 7
