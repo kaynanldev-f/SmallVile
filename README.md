@@ -1,10 +1,10 @@
-# 🎬 SmallVille — Sistema de Cinema
+# 🎬 SmallVile — Sistema de Cinema
 
 > Plataforma de cinema desenvolvida em equipe, com foco em experiência do usuário, compra de ingressos e gerenciamento de pedidos.
 
 ## 📌 Sobre o projeto
 
-O **SmallVille** é uma aplicação full-stack que simula uma plataforma de cinema, permitindo que usuários consultem filmes e sessões, escolham assentos, adquiram produtos da bomboniere e realizem pedidos.
+O **SmallVile** é uma aplicação full-stack que simula uma plataforma de cinema, permitindo que usuários consultem filmes e sessões, escolham assentos, adquiram produtos da bomboniere e realizem pedidos.
 
 O projeto foi desenvolvido em equipe, com minha principal contribuição concentrada no **desenvolvimento do Frontend**, trabalhando na construção das interfaces, componentes e integração com a API.
 
